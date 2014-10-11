@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p><strong>Welcome to Clin!</strong></p>
-<p>Select your mode:
-<div class="btn-group">
-    <button type="button" class="js-switch-test btn btn-default">Test</button>
-    <button type="button" class="js-switch-add btn btn-default">Add</button>
+<div class="container clin-box glossy">
+    <div class="row"><p><strong>Welcome to Clin!</strong></p></div>
+    <div class="row">
+        <div class="col-md-6"><p>Select your mode:</p></div>
+        <div class="btn-group col-md-6">
+            <button type="button" class="js-switch-test btn btn-default">Test</button>
+            <button type="button" class="js-switch-add btn btn-default">Add</button>
+        </div>
+    </div>
 </div>
-</p>
+
+{% include 'templates/partials/card-box.html' %}
 {% endblock %}

@@ -1,0 +1,22 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/clin.css' %}" />
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/underscore.min.js' %}"></script>
+<script src="{% static 'js/backbone.min.js' %}"></script>
+<script src="{% static 'js/clin.js' %}"></script>
+</head>
+<body>
+<div class="content-wrapper">
+{% block content %}{% endblock %}
+</div>
+<footer>
+footer here
+</footer>
+</body>
+</html>
