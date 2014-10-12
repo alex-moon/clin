@@ -37,6 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_extensions',
+
     'clin.card',
 )
 
@@ -80,6 +82,12 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+# Templates files
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, "templates"),
+)
 
 
 # Static files (CSS, JavaScript, Images)

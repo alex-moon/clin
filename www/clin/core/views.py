@@ -13,13 +13,13 @@ class HomeView(TemplateView):
 class JsonView(View):
     def build_response(self, response_dict):
         if 'status' not in response_dict:
-            response_dict.status = 500
+            response_dict['status'] = 500
             if 'error' not in response_dict:
-                response_dict.error = 'Unknown error'
+                response_dict['error'] = 'Unknown error'
 
         return HttpResponse(
             json.dumps(response_dict),
-            status=response_dict.status,
+            status=response_dict['status'],
             content_type='application/json',
         )
 
@@ -37,7 +37,7 @@ class JsonView(View):
 
 class JsonGetView(JsonView):
     def get(self, request, *args, **kwargs):
-        return self.handl(request, *args, **kwargs)
+        return self.handle(request, *args, **kwargs)
 
 
 class JsonPostView(JsonView):

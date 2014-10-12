@@ -15,11 +15,11 @@ class CardService(object):
 
     def get_cards(self, count=DEFAULT_CARD_COUNT):
         sample = Card.objects.all()[:count * 10]
-        return random.sample(sample, count)
+        return random.sample(sample, count if count < sample.count() else sample.count())
 
     def answer_card(self, pk, answer):
         card = Card.objects.get(pk=pk)
-        card.answer_french(answer)
+        card.answer_card(answer)
         if card.answered_count > self._cache_max_answered:
             self._cache_max_answered = card.answered_count
 

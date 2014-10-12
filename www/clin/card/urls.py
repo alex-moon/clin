@@ -1,10 +1,9 @@
-from django.conf.urls import patterns, include, url
-from django.contrib import admin
+from django.conf.urls import patterns, url
 
-from clin import card, core
+from clin.card import views
 
 urlpatterns = patterns('',
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^card/', include(card.urls)),
-    url(r'', include(core.urls)),
+    url(r'^get/$', views.GetCardsView.as_view(), name='get-cards'),
+    url(r'^add/$', views.AddCardView.as_view(), name='add-card'),
+    url(r'^answer/(?P<pk>\d+)/$', views.AnswerCardView.as_view(), name='answer-card'),
 )
