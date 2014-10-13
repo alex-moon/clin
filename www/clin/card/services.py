@@ -22,6 +22,7 @@ class CardService(object):
         card.answer_card(answer)
         if card.answered_count > self._cache_max_answered:
             self._cache_max_answered = card.answered_count
+        return card
 
     def add_card(self, french, english):
         english_card = Card.objects.create(

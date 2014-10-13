@@ -28,19 +28,22 @@ class Card(models.Model):
         answer_len = len(self.answer)
         levdist = distance(answer, self.answer)
         correct_len = answer_len - levdist
-        score = correct_len / answer_len
+        score = float(correct_len) / answer_len
         self.update_score(score)
 
     def update_score(self, score):
-        if self.answered_count == 0:
+        self.answered_count += 1
+        if self.answered_count == 1:
             self.last_score = self.average_score = score
+        elif self.answered_count < self.SMA_N:
+            self.average_score = (self.last_score + score) / self.answered_count
+            self.last_score = score
         else:
             new_average = self.average_score \
                           - self.last_score / self.SMA_N \
                           + score / self.SMA_N
             self.last_score = score
             self.average_score = new_average
-        self.answered_count += 1
         self.save()
 
     def serialise(self):

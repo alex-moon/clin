@@ -1,27 +1,32 @@
 <script type="text/template" id="test-view-template">
     <div class="row" data-card="<%= card.pk %>">
-        <div class="col-md-4 test-view-question">
-            <%= card.question %>
-        </div>
-        <div class="col-md-4 test-view-answer">
-            <input type="text" value="" />
-        </div>
-        <div class="col-md-4 test-view-submit">
-            <button type="button" class="btn btn-primary">Submit</button>
-        </div>
+        <form>
+            <input type="hidden" name="pk" value="<%= card.pk %>" />
+            <div class="col-md-4 test-view-question">
+                <label><%= card.question %></label>
+            </div>
+            <div class="col-md-4 test-view-answer">
+                <input name="answer" type="text" value="" />
+            </div>
+            <div class="col-md-4 test-view-submit">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
     </div>
 </script>
 
 <script type="text/template" id="add-view-template">
     <div class="row">
-        <div class="col-md-4 add-view-question">
-            <input type="text" value="" />
-        </div>
-        <div class="col-md-4 add-view-answer">
-            <input type="text" value="" />
-        </div>
-        <div class="col-md-4 add-view-submit">
-            <button type="button" class="btn btn-primary">Submit</button>
-        </div>
+        <form>
+            <div class="col-md-4 add-view-question">
+                <input name="question" type="text" value="" />
+            </div>
+            <div class="col-md-4 add-view-answer">
+                <input name="answer" type="text" value="" />
+            </div>
+            <div class="col-md-4 add-view-submit">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
     </div>
 </script>
