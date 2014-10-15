@@ -49,6 +49,13 @@ label {
     border: solid 1px #d0d0d0;
     margin: 20px 0;
     padding: 30px;
+
+    overflow: hidden;
+}
+
+#test-view {
+    height: 100px;
+    overflow: hidden;
 }
 
 footer {
@@ -70,4 +77,51 @@ footer {
     background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.0) 51%, rgba(255, 255, 255, 0.2) 100%); /* FF3.6+ */
     background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.0) 51%, rgba(255, 255, 255, 0.2) 100%); /* Opera11.10+ */
     background-image: linear-gradient(top, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.0) 51%, rgba(255, 255, 255, 0.2) 100%); /* W3C */
+}
+
+.fade-out {
+  animation: fadeOutFrames linear 0.3s;
+  -webkit-animation: fadeOutFrames linear 0.3s;
+  -moz-animation: fadeOutFrames linear 0.3s;
+  -o-animation: fadeOutFrames linear 0.3s;
+  opacity: 0;
+}
+@keyframes fadeOutFrames{
+  0% { opacity:1; transform: translate(0px,0px); }
+  100% { opacity:0; transform: translate(0px,-100px); }
+}
+@-moz-keyframes fadeOutFrames{
+  0% { opacity:1; -moz-transform: translate(0px,0px); }
+  100% { opacity:0; -moz-transform: translate(0px,-100px); }
+}
+@-webkit-keyframes fadeOutFrames {
+  0% { opacity:1; -webkit-transform: translate(0px,0px); }
+  100% { opacity:0; -webkit-transform: translate(0px,-100px); }
+}
+@-o-keyframes fadeOutFrames {
+  0% { opacity:1; -o-transform: translate(0px,0px); }
+  100% { opacity:0; -o-transform: translate(0px,-100px); }
+}
+
+.fade-in {
+  animation: fadeInFrames linear 0.3s;
+  -webkit-animation: fadeInFrames linear 0.3s;
+  -moz-animation: fadeInFrames linear 0.3s;
+  -o-animation: fadeInFrames linear 0.3s;
+}
+@keyframes fadeInFrames{
+  0% { opacity:0; transform: translate(0px,100px); }
+  100% { opacity:1; transform: translate(0px,0px); }
+}
+@-moz-keyframes fadeInFrames{
+  0% { opacity:0; -moz-transform: translate(0px,100px); }
+  100% { opacity:1; -moz-transform: translate(0px,0px); }
+}
+@-webkit-keyframes fadeInFrames {
+  0% { opacity:0; -webkit-transform: translate(0px,100px); }
+  100% { opacity:1; -webkit-transform: translate(0px,0px); }
+}
+@-o-keyframes fadeInFrames {
+  0% { opacity:0; -o-transform: translate(0px,100px); }
+  100% { opacity:1; -o-transform: translate(0px,0px); }
 }

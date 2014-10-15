@@ -29,7 +29,6 @@ function Clin() {
         }
 
         function answer_card(pk, answer) {
-            console.log(answer_card_url({'pk': pk}));
             $.post(answer_card_url({'pk': pk}), {
                 'answer': answer
             }, trigger('card_answered'));
@@ -52,7 +51,7 @@ function Clin() {
         }
 
         function add_cards_to_list(data) {
-            cards.concat(data);
+            cards = cards.concat(data['cards']);
         }
 
         function add_card(pk, question, answer) {
@@ -123,9 +122,12 @@ function Clin() {
         
         function next_card(data) {
             var next_card = controller.next_card();
-            var next_card_el = template(next_card);
+            var next_card_el = template({'card': next_card});
+            var $old_card = $(el).find('.row')
+            $old_card.removeClass('fade-in').addClass('fade-out');
             $(el).append(next_card_el);
-            // @todo scroll up lol
+            bind_listeners();
+            _.delay(function(){ $old_card.remove(); }, 300);
         }
 
         observer.on('incoming_cards', first_card);
