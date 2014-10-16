@@ -120,10 +120,10 @@ function Clin() {
         
         function next_card(data) {
             var next_card = controller.next_card();
-            var next_card_el = template({'card': next_card});
+            var $next_card_el = $(template({'card': next_card}));
             var $old_card = $(el).find('.row')
             $old_card.removeClass('fade-in-up').addClass('fade-out-up');
-            $(el).append(next_card_el);
+            $(el).append($next_card_el);
             bind_listeners();
             _.delay(function(){ $old_card.remove(); }, 300);
         }

@@ -2,18 +2,17 @@
 
 {% block content %}
 <div class="container clin-box glossy">
-    <div class="row"><h2>Welcome to Clin</h2></div>
-    <div class="row">
-        <div class="col-md-4"><label>Select your mode:</label></div>
-        <div class="btn-group col-md-8" data-toggle="buttons">
-        <label class="btn btn-primary active">
-            <input type="radio" name="mode" class="js-switch-test" checked="checked" /> Test
-        </label>
-        <label class="btn btn-primary">
-            <input type="radio" name="mode" class="js-switch-add" /> Add
-        </label>
+    <h2>Welcome to Clin</h2>
+    <label>Select your mode:
+        <div class="btn-group" data-toggle="buttons">
+            <label class="btn btn-primary active">
+                <input type="radio" name="mode" class="js-switch-test" checked="checked" /> Test
+            </label>
+            <label class="btn btn-primary">
+                <input type="radio" name="mode" class="js-switch-add" /> Add
+            </label>
         </div>
-    </div>
+    </label>
 </div>
 
 {% include 'partials/card-box.html' %}

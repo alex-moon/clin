@@ -7,7 +7,11 @@ body {
 }
 
 h2 {
-    margin: 0 0.4em 1em;
+    margin: 0 0 20px;
+}
+
+.btn-group {
+    margin-left: 20px;
 }
 
 input[type=text] {
@@ -34,8 +38,8 @@ label {
     -moz-box-sizing: border-box;
     -o-box-sizing: border-box; 
     box-sizing: border-box;
-    min-height: 100%;
-    padding: 60px 0 100px;
+    min-height: 80%;
+    padding: 60px 0 0;
     position: relative;
 }
 
@@ -56,10 +60,11 @@ label {
     padding: 20px 30px;
 
     overflow: hidden;
+    text-align: center;
 }
 
 #test-view {
-    height: 100px;
+    // height: 100px;
     overflow: hidden;
 }
 
@@ -68,18 +73,13 @@ label {
 }
 
 #add-view {
-    //display: none;
-    height: 100px;
+    // height: 100px;
     overflow: hidden;
-    //padding-top: 20px;
 }
 
 footer {
-    bottom: 0;
+    clear: both;
     height: 100px;
-    left: 0;
-    position: absolute;
-    width: 100%;
     text-align: center;
 }
 
@@ -124,6 +124,7 @@ footer {
   -webkit-animation: fadeInUpFrames linear 0.3s;
   -moz-animation: fadeInUpFrames linear 0.3s;
   -o-animation: fadeInUpFrames linear 0.3s;
+  position: relative;
 }
 @keyframes fadeInUpFrames{
   0% { opacity:0; transform: translate(0px,100px); }
