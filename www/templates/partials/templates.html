@@ -1,31 +1,32 @@
 <script type="text/template" id="test-view-template">
-    <div class="row fade-in" data-card="<%= card.pk %>">
+    <div class="row fade-in-up" data-card="<%= card.pk %>">
         <form>
             <input type="hidden" name="pk" value="<%= card.pk %>" />
-            <div class="col-md-4 test-view-question">
-                <label><%= card.question %></label>
+            <div class="col-md-10 test-view-question">
+                <label><%= card.question %> <input name="answer" type="text" value="" /></label>
             </div>
-            <div class="col-md-4 test-view-answer">
-                <input name="answer" type="text" value="" />
-            </div>
-            <div class="col-md-4 test-view-submit">
-                <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="col-md-2 test-view-submit">
+                <button type="submit" class="btn btn-primary" data-loading-text="Submitting...">Submit</button>
             </div>
         </form>
     </div>
 </script>
 
 <script type="text/template" id="add-view-template">
-    <div class="row">
+    <div class="row fade-in-up">
         <form>
-            <div class="col-md-4 add-view-question">
-                <input name="question" type="text" value="" />
+            <div class="col-md-5 add-view-question">
+                <label>French
+                <input name="french" type="text" value="" />
+                </label>
             </div>
-            <div class="col-md-4 add-view-answer">
-                <input name="answer" type="text" value="" />
+            <div class="col-md-5 add-view-answer">
+                <label>English
+                <input name="english" type="text" value="" />
+                </label>
             </div>
-            <div class="col-md-4 add-view-submit">
-                <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="col-md-2 add-view-submit">
+                <button type="submit" class="btn btn-primary" data-loading-text="Submitting...">Submit</button>
             </div>
         </form>
     </div>

@@ -50,16 +50,16 @@ function Clin() {
             backend.answer_card(data['pk'], data['answer']);
         }
 
-        function add_cards_to_list(data) {
+        function add_card(data) {
+            backend.add_card(data['french'], data['english']);
+        }
+
+        function incoming_cards(data) {
             cards = cards.concat(data['cards']);
         }
 
-        function add_card(pk, question, answer) {
-            cards.push({
-                'pk': pk,
-                'question': question,
-                'answer': answer
-            });
+        function incoming_card(data) {
+            incoming_cards({'cards': [data['card']]});
         }
 
         function next_card() {
@@ -71,7 +71,8 @@ function Clin() {
         }
 
         // set up listeners
-        observer.on('incoming_cards', add_cards_to_list);
+        observer.on('incoming_cards', incoming_cards);
+        observer.on('card_added', incoming_card);
 
         // and here we go!
         function start() {
@@ -81,17 +82,17 @@ function Clin() {
         return {
             'start': start,
             'answer_card': answer_card,
-            'next_card': next_card,
             'add_card': add_card,
+            'next_card': next_card,
             'backend': backend,
         }
     }
     controller = new Controller();
 
-    // handy function for views to use -
-    // converts an array from $(form_selector).serializeArray()
-    // to a dict we can JSONify ... :)
-    function form_to_obj(form_array) {
+    // handy functions for views to use
+    function form_to_obj(form) {
+        // gets form vals in an object we can JSONify ... :)
+        form_array = $(form).serializeArray();
         return _(form_array).reduce(function(acc, field) {
             acc[field.name] = field.value;
             return acc;
@@ -102,17 +103,6 @@ function Clin() {
         var el = '#test-view';
         var template = _.template($('#test-view-template').text());
 
-        function answer_card(e) {
-            e.preventDefault();
-            form_data = $(el).find('form').serializeArray();
-            data = form_to_obj(form_data);
-            controller.answer_card(data);  // @todo Demeter - should be a method on controller
-        }
-
-        function bind_listeners(data) {
-            $(el).find('form').on('submit', answer_card);
-        }
-        
         function first_card(data) {
             var next_card = data['cards'][0];
             var next_card_el = template({'card': next_card});
@@ -124,25 +114,76 @@ function Clin() {
             var next_card = controller.next_card();
             var next_card_el = template({'card': next_card});
             var $old_card = $(el).find('.row')
-            $old_card.removeClass('fade-in').addClass('fade-out');
+            $old_card.removeClass('fade-in-up').addClass('fade-out-up');
             $(el).append(next_card_el);
             bind_listeners();
             _.delay(function(){ $old_card.remove(); }, 300);
+        }
+
+        function answer_card(e) {
+            e.preventDefault();
+            var form = $(el).find('form');
+            form.find('button[type=submit]').button('loading');
+            data = form_to_obj(form);
+            controller.answer_card(data);
+        }
+
+        function bind_listeners(data) {
+            $(el).find('form').on('submit', answer_card);
         }
 
         observer.on('incoming_cards', first_card);
         observer.on('card_answered', next_card);
 
         return {
+            'next_card': next_card
         }
     };
     test_view = new TestView();
+
+    function AddView () {
+        var el = '#add-view';
+        var template = _.template($('#add-view-template').text());
+
+        function reset_form() {
+            var $old_form = $(el).find('.row');
+            if ($old_form.length) {
+                $old_form.removeClass('fade-in-up').addClass('fade-out-up');
+                _.delay(function(){ $old_form.remove(); }, 300);
+            }
+
+            var new_form_el = template();
+            $(el).append(new_form_el);
+            bind_listeners();
+        }
+
+        function add_card(e) {
+            e.preventDefault();
+            var form = $(el).find('form');
+            form.find('button[type=submit]').button('loading');
+            data = form_to_obj(form);
+            controller.add_card(data);
+        }
+
+        function bind_listeners(data) {
+            $(el).find('form').on('submit', add_card);
+        }
+
+        observer.on('card_added', reset_form);
+
+        reset_form();
+        return {
+            'reset_form': reset_form
+        }
+    };
+    add_view = new AddView();
 
     controller.start();
     return {
         'observer': observer,
         'controller': controller,
-        'test_view': test_view
+        'test_view': test_view,
+        'add_view': add_view
     }
 }
 window.clin = new Clin();
