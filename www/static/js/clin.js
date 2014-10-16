@@ -70,7 +70,7 @@ function Clin() {
 
         function next_card() {
             current_card_index ++;
-            if (current_card_index > cards.length) {
+            if (current_card_index >= cards.length) {
                 current_card_index = 0;
             }
             return cards[current_card_index];
@@ -121,11 +121,14 @@ function Clin() {
         function next_card(data) {
             var next_card = controller.next_card();
             var $next_card_el = $(template({'card': next_card}));
+
             var $old_card = $(el).find('.row')
             $old_card.removeClass('fade-in-up').addClass('fade-out-up');
-            $(el).append($next_card_el);
-            bind_listeners();
-            _.delay(function(){ $old_card.remove(); }, 300);
+            _.delay(function(){
+                $old_card.remove();
+                $(el).append($next_card_el);
+                bind_listeners();
+            }, 300);
         }
 
         function answer_card(e) {
@@ -154,15 +157,21 @@ function Clin() {
         var template = _.template($('#add-view-template').text());
 
         function reset_form() {
+            var new_form_el = template();
+
             var $old_form = $(el).find('.row');
             if ($old_form.length) {
                 $old_form.removeClass('fade-in-up').addClass('fade-out-up');
-                _.delay(function(){ $old_form.remove(); }, 300);
+                _.delay(function(){
+                    $old_form.remove();
+                    $(el).append(new_form_el);
+                    bind_listeners();
+                }, 300);
+            } else {
+                $(el).append(new_form_el);
+                bind_listeners();
             }
 
-            var new_form_el = template();
-            $(el).append(new_form_el);
-            bind_listeners();
         }
 
         function add_card(e) {
