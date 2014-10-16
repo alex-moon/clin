@@ -1,6 +1,11 @@
 function Clin() {
     var observer = _.clone(Backbone.Events);
 
+    var error_msg = _.template($('#error-msg-template').text())
+    function show_error(error) {
+        $('.card-box').prepend(error_msg({'error': error}));
+    }
+
     function Backend() {
         var get_cards_url = '/card/get/';
         var add_card_url = '/card/add/';
@@ -8,7 +13,12 @@ function Clin() {
 
         function trigger(keyword) {
             function handle(data) {
-                observer.trigger(keyword, data);
+                if (data.error) {
+                    show_error(data.error);
+                    $('button[type=submit]').button('reset');
+                } else {
+                    observer.trigger(keyword, data);
+                }
             }
             return handle;
         }
@@ -25,7 +35,7 @@ function Clin() {
             $.post(add_card_url, {
                 'french': french,
                 'english': english
-            }, trigger('card_added'));
+            }, trigger('incoming_cards'));
         }
 
         function answer_card(pk, answer) {
@@ -58,10 +68,6 @@ function Clin() {
             cards = cards.concat(data['cards']);
         }
 
-        function incoming_card(data) {
-            incoming_cards({'cards': [data['card']]});
-        }
-
         function next_card() {
             current_card_index ++;
             if (current_card_index > cards.length) {
@@ -72,7 +78,6 @@ function Clin() {
 
         // set up listeners
         observer.on('incoming_cards', incoming_cards);
-        observer.on('card_added', incoming_card);
 
         // and here we go!
         function start() {
@@ -104,10 +109,13 @@ function Clin() {
         var template = _.template($('#test-view-template').text());
 
         function first_card(data) {
-            var next_card = data['cards'][0];
-            var next_card_el = template({'card': next_card});
-            $(el).html(next_card_el);
-            bind_listeners();
+            var $current_card = $(el).find('.row');
+            if (!$current_card.length && data['cards'] && data['cards'][0]) {
+                var next_card = data['cards'][0];
+                var next_card_el = template({'card': next_card});
+                $(el).html(next_card_el);
+                bind_listeners();
+            }
         }
         
         function next_card(data) {
@@ -169,7 +177,7 @@ function Clin() {
             $(el).find('form').on('submit', add_card);
         }
 
-        observer.on('card_added', reset_form);
+        observer.on('incoming_cards', reset_form);
 
         reset_form();
         return {

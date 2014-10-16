@@ -5,9 +5,13 @@
     <div class="row"><h2>Welcome to Clin</h2></div>
     <div class="row">
         <div class="col-md-4"><label>Select your mode:</label></div>
-        <div class="btn-group col-md-8">
-            <button data-toggle="button" type="button" class="js-switch-test btn btn-default">Test</button>
-            <button data-toggle="button" type="button" class="js-switch-add btn btn-default">Add</button>
+        <div class="btn-group col-md-8" data-toggle="buttons">
+        <label class="btn btn-primary active">
+            <input type="radio" name="mode" class="js-switch-test" checked="checked" /> Test
+        </label>
+        <label class="btn btn-primary">
+            <input type="radio" name="mode" class="js-switch-add" /> Add
+        </label>
         </div>
     </div>
 </div>

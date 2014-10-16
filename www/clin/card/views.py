@@ -6,11 +6,16 @@ service = CardService()
 
 class AddCardView(JsonPostView):
     def get_response(self, request, *args, **kwargs):
-        english_card, french_card = service.add_card(**request.POST)
-        return {
-            'english_card': english_card.serialise(),
-            'french_card': french_card.serialise(),
-        }
+        french = request.POST.get('french')
+        english = request.POST.get('english')
+        if not french or not english:
+            raise Exception('Please supply both French and English')
+
+        english_card, french_card = service.add_card(french, english)
+        return {'cards': [
+            english_card.serialise(),
+            french_card.serialise(),
+        ]}
 
 
 class GetCardsView(JsonGetView):

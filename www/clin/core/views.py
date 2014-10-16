@@ -29,7 +29,7 @@ class JsonView(View):
             response.update(self.get_response(request, *args, **kwargs))
         except Exception as e:
             response = {
-                'status': 500,
+                'status': 200,
                 'error': str(e),
             }
         return self.build_response(response)
