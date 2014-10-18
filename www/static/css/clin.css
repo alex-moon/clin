@@ -75,6 +75,7 @@ label {
 #add-view {
     // height: 100px;
     overflow: hidden;
+    display: none;
 }
 
 footer {

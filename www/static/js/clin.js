@@ -94,15 +94,80 @@ function Clin() {
     }
     controller = new Controller();
 
-    // handy functions for views to use
-    function form_to_obj(form) {
+    function ViewHelpers () {
+        function cycle(direction, e, callback) {
+            if (direction == 'up') {
+                $old_el = $($(e).children()[0]);
+                $new_el = $($(e).children()[1]);
+            } else {
+                $old_el = $($(e).children()[1]);
+                $new_el = $($(e).children()[0]);
+            }
+
+            $new_el.css('display', 'none');
+            $old_el.addClass('fade-out-' + direction);
+            _.delay(function(){
+                $old_el.css('display', 'none').removeClass('fade-out-' + direction);
+                $new_el.css('display', 'block').addClass('fade-in-' + direction);
+                _.delay(function(){
+                    $new_el.removeClass('fade-in-' + direction);
+                }, 300);
+
+                if (!_.isUndefined(callback)) {
+                    callback();
+                }
+            }, 300);
+        }
+
+        function cycle_up(e, callback) {
+            cycle('up', e, callback);
+        }
+
+        function cycle_down(e, callback) {
+            cycle('down', e, callback);
+        }
+
         // gets form vals in an object we can JSONify ... :)
-        form_array = $(form).serializeArray();
-        return _(form_array).reduce(function(acc, field) {
-            acc[field.name] = field.value;
-            return acc;
-        }, {});
+        function form_to_obj(form) {
+            form_array = $(form).serializeArray();
+            return _(form_array).reduce(function(acc, field) {
+                acc[field.name] = field.value;
+                return acc;
+            }, {});
+        }
+
+        return {
+            'cycle_up': cycle_up,
+            'cycle_down': cycle_down,
+            'form_to_obj': form_to_obj,
+        }
     }
+    helpers = new ViewHelpers();
+
+    function HomeView () {
+        var current_mode = 'test';
+        var el = '#home-view';
+        var card_box = $(el).find('.card-box');
+
+        function switch_mode(mode) {
+            if (current_mode == mode) {
+                return;
+            }
+
+            if (current_mode == 'test') {
+                helpers.cycle_up(card_box);
+            } else {
+                helpers.cycle_down(card_box);
+            }
+
+            current_mode = mode;
+        }
+
+        $(el).find('.mode-switcher input').change(function(e){
+            switch_mode($(this).data('mode'));
+        });
+    }
+    var home_view = new HomeView();
 
     function TestView () {
         var el = '#test-view';
@@ -121,21 +186,20 @@ function Clin() {
         function next_card(data) {
             var next_card = controller.next_card();
             var $next_card_el = $(template({'card': next_card}));
+            var $old_card = $(el).find('.row');
 
-            var $old_card = $(el).find('.row')
-            $old_card.removeClass('fade-in-up').addClass('fade-out-up');
-            _.delay(function(){
+            $(el).append($next_card_el);
+            helpers.cycle_up(el, function(){
                 $old_card.remove();
-                $(el).append($next_card_el);
-                bind_listeners();
-            }, 300);
+            });
+            bind_listeners();
         }
 
         function answer_card(e) {
             e.preventDefault();
             var form = $(el).find('form');
             form.find('button[type=submit]').button('loading');
-            data = form_to_obj(form);
+            data = helpers.form_to_obj(form);
             controller.answer_card(data);
         }
 
@@ -160,25 +224,21 @@ function Clin() {
             var new_form_el = template();
 
             var $old_form = $(el).find('.row');
+            $(el).append(new_form_el);
             if ($old_form.length) {
-                $old_form.removeClass('fade-in-up').addClass('fade-out-up');
-                _.delay(function(){
+                helpers.cycle_up(el, function(){
                     $old_form.remove();
-                    $(el).append(new_form_el);
-                    bind_listeners();
-                }, 300);
-            } else {
-                $(el).append(new_form_el);
-                bind_listeners();
+                });
             }
 
+            bind_listeners();
         }
 
         function add_card(e) {
             e.preventDefault();
             var form = $(el).find('form');
             form.find('button[type=submit]').button('loading');
-            data = form_to_obj(form);
+            data = helpers.form_to_obj(form);
             controller.add_card(data);
         }
 
@@ -199,6 +259,7 @@ function Clin() {
     return {
         'observer': observer,
         'controller': controller,
+        'home_view': home_view,
         'test_view': test_view,
         'add_view': add_view
     }
