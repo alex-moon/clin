@@ -4,18 +4,19 @@ from clin.card.services import CardService
 service = CardService()
 
 
-class AddCardView(JsonPostView):
+class AddCardsView(JsonPostView):
     def get_response(self, request, *args, **kwargs):
-        french = request.POST.get('french')
-        english = request.POST.get('english')
-        if not french or not english:
-            raise Exception('Please supply both French and English')
+        cards = []
+        for card in request.POST['cards']:
+            french = card.get('french')
+            english = card.get('english')
+            if not french or not english:
+                raise Exception('Please supply both French and English')
 
-        english_card, french_card = service.add_card(french, english)
-        return {'cards': [
-            english_card.serialise(),
-            french_card.serialise(),
-        ]}
+            english_card, french_card = service.add_card(french, english)
+            cards.append(english_card.serialise())
+            cards.append(french_card.serialise())
+        return {'cards': cards}
 
 
 class GetCardsView(JsonGetView):
@@ -26,9 +27,12 @@ class GetCardsView(JsonGetView):
         return {'cards': cards_list}
 
 
-class AnswerCardView(JsonPostView):
+class AnswerCardsView(JsonPostView):
     def get_response(self, request, *args, **kwargs):
-        pk = kwargs['pk']
-        answer = request.POST['answer']
-        card = service.answer_card(pk, answer)
-        return {'card': card.serialise()}
+        cards = []
+        for card in request.POST['cards']:
+            pk = card['pk']
+            answer = card['answer']
+            cards.append(service.answer_card(pk, answer))
+        cards_list = [card.serialise() for card in cards]
+        return {'cards': cards_list}

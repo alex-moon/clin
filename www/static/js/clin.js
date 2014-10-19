@@ -1,27 +1,10 @@
 function Clin() {
     var observer = _.clone(Backbone.Events);
 
-    var error_msg = _.template($('#error-msg-template').text())
-    function show_error(error) {
-        $('.card-box').prepend(error_msg({'error': error}));
-    }
-
     function Backend() {
         var get_cards_url = '/card/get/';
         var add_card_url = '/card/add/';
         var answer_card_url = _.template('/card/answer/<%= pk %>/')
-
-        function trigger(keyword) {
-            function handle(data) {
-                if (data.error) {
-                    show_error(data.error);
-                    $('button[type=submit]').button('reset');
-                } else {
-                    observer.trigger(keyword, data);
-                }
-            }
-            return handle;
-        }
 
         function get_cards(count) {
             var url = get_cards_url;
@@ -31,17 +14,12 @@ function Clin() {
             $.get(url, trigger('incoming_cards'));
         }
 
-        function add_card(french, english) {
-            $.post(add_card_url, {
-                'french': french,
-                'english': english
-            }, trigger('incoming_cards'));
+        function add_cards(data, success, failure) {
+            $.post(add_cards_url, data).success(success).fail(failure);
         }
 
-        function answer_card(pk, answer) {
-            $.post(answer_card_url({'pk': pk}), {
-                'answer': answer
-            }, trigger('card_answered'));
+        function answer_cards(data, success, failure) {
+            $.post(answer_cards_url, data).success(success).fail(failure);
         }
 
         return {
@@ -52,16 +30,72 @@ function Clin() {
     }
     var backend = new Backend();
 
+    function PersistenceManager() {
+        // queue pushes until the server is available
+        // @todo also poll for new cards when card count drops below 50?
+        // @todo add listener triggers from backend
+
+        var persist_queue = [];
+
+        function trigger(keyword) {
+            function handle(data) {
+                if (data.error) {
+                    helpers.show_error(data.error);
+                } else {
+                    observer.trigger(keyword, data);
+                }
+            }
+            return handle;
+        }
+
+        function attempt_persist() {
+            var adds = _(push_queue).filter(function(x){ return x.action == 'add'; });
+            var answers = _(push_queue).filter(function(x){ return x.action == 'answer'; });
+
+            var adds_cards = _(adds).map(function(x){ return x.cards; }
+            var answers_cards = _(answers).map(function(x){ return x.cards; }
+
+            backend.add_cards(adds_cards,
+                function(){ push_queue = _(push_queue).difference(adds); },
+                function(){ _.delay(attemp_persist, 30000); }
+            );
+            backend.answer_cards(answers_cards,
+                function(){ push_queue = _(push_queue).difference(answers); },
+                function(){ _.delay(attemp_persist, 30000); }
+            );
+        }
+
+        function queue(data) {
+            persist_queue.push(data);
+            attempt_persist();
+        }
+
+        function answer_card(card_answer) {
+            queue({'action': 'answer', 'cards': [card_answer]});
+            trigger('card-answered')(card_answer);
+        }
+
+        function add_card(card_add) {
+            queue({'action': 'add', 'cards': [card_add]});
+            trigger('card-added')(card_add);
+        }
+    }
+    var persist = new PersistenceManager();
+
     function Controller() {
         var cards = [];
         var current_card_index = 0;
 
         function answer_card(data) {
-            backend.answer_card(data['pk'], data['answer']);
+            persist.answer_card(data);
         }
 
         function add_card(data) {
-            backend.add_card(data['french'], data['english']);
+            if (! data['french'] || ! data['english']) {
+                helpers.show_error('Please supply both French and English.')
+            } else {
+                persist.add_card(data);
+            }
         }
 
         function incoming_cards(data) {
@@ -94,7 +128,13 @@ function Clin() {
     }
     controller = new Controller();
 
+    // VIEWS
+
     function ViewHelpers () {
+        // scrolls two elements in place so one replaces the other
+        // @param direction 'up' or 'down'
+        // @param e the parent element with at least two children
+        // @param callback function to call after the first element is scrolled
         function cycle(direction, e, callback) {
             if (direction == 'up') {
                 $old_el = $($(e).children()[0]);
@@ -136,10 +176,18 @@ function Clin() {
             }, {});
         }
 
+        // shows an error message
+        var error_msg = _.template($('#error-msg-template').text())
+        function show_error(error) {
+            $('.card-box').prepend(error_msg({'error': error}));
+            $('button[type=submit]').button('reset');
+        }
+
         return {
             'cycle_up': cycle_up,
             'cycle_down': cycle_down,
             'form_to_obj': form_to_obj,
+            'show_error': show_error
         }
     }
     helpers = new ViewHelpers();
