@@ -6,12 +6,12 @@ function Clin() {
         var add_card_url = '/card/add/';
         var answer_card_url = _.template('/card/answer/<%= pk %>/')
 
-        function get_cards(count) {
+        function get_cards(count, success, failure) {
             var url = get_cards_url;
             if (!_.isUndefined(count)) {
                 url += '?count=' + count;
             }
-            $.get(url, trigger('incoming_cards'));
+            $.get(url).success(success).fail(failure);
         }
 
         function add_cards(data, success, failure) {
@@ -30,7 +30,7 @@ function Clin() {
     }
     var backend = new Backend();
 
-    function PersistenceManager() {
+    function ConnectionManager() {
         // queue pushes until the server is available
         // @todo also poll for new cards when card count drops below 50?
         // @todo add listener triggers from backend
@@ -65,9 +65,21 @@ function Clin() {
             );
         }
 
+        function attempt_get() {
+            backend.get_cards(
+                trigger('incoming_cards'),
+                function(){ _.delay(attempt_get, 30000); }
+            );
+        }
+
         function queue(data) {
             persist_queue.push(data);
             attempt_persist();
+        }
+
+        function sync() {
+            // attemp_persist();
+            attempt_get();
         }
 
         function answer_card(card_answer) {
@@ -80,21 +92,21 @@ function Clin() {
             trigger('card-added')(card_add);
         }
     }
-    var persist = new PersistenceManager();
+    var connection = new ConnectionManager();
 
     function Controller() {
         var cards = [];
         var current_card_index = 0;
 
         function answer_card(data) {
-            persist.answer_card(data);
+            connection.answer_card(data);
         }
 
         function add_card(data) {
             if (! data['french'] || ! data['english']) {
                 helpers.show_error('Please supply both French and English.')
             } else {
-                persist.add_card(data);
+                connection.add_card(data);
             }
         }
 
@@ -115,7 +127,7 @@ function Clin() {
 
         // and here we go!
         function start() {
-            backend.get_cards();
+            backend.sync();
         }
 
         return {
