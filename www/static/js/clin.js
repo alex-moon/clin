@@ -2,9 +2,9 @@ function Clin() {
     var observer = _.clone(Backbone.Events);
 
     function Backend() {
-        var get_cards_url = '/card/get/';
-        var add_cards_url = '/card/add/';
-        var answer_cards_url = '/card/answer/';
+        var get_cards_url = '/cards/get/';
+        var add_cards_url = '/cards/add/';
+        var answer_cards_url = '/cards/answer/';
 
         function get_cards(success, failure, count) {
             var url = get_cards_url;
@@ -57,29 +57,27 @@ function Clin() {
             var adds_cards = _(adds).reduce(function(ac, x){ return ac.concat(x.cards); }, []);
             var answers_cards = _(answers).reduce(function(ac, x){ return ac.concat(x.cards); }, []);
 
-            console.log(adds_cards);
-
             if (adds_cards.length) {
                 backend.add_cards(adds_cards,
                     function(data){
                         persist_queue = _(persist_queue).difference(adds);
-                        trigger('incoming_cards')(data);
+                        trigger('incoming-cards')(data);
                     },
-                    function(){ _.delay(attemp_persist, 30000); }
+                    function(){ _.delay(attempt_persist, 30000); }
                 );
             }
 
             if (answers_cards.length) {
                 backend.answer_cards(answers_cards,
                     function(){ persist_queue = _(persist_queue).difference(answers); },
-                    function(){ _.delay(attemp_persist, 30000); }
+                    function(){ _.delay(attempt_persist, 30000); }
                 );
             }
         }
 
         function attempt_get() {
             backend.get_cards(
-                trigger('incoming_cards'),
+                trigger('incoming-cards'),
                 function(){ _.delay(attempt_get, 30000); }
             );
         }
@@ -101,7 +99,7 @@ function Clin() {
 
         function add_card(card_add) {
             queue({'action': 'add', 'cards': [card_add]});
-            trigger('card_added')(card_add);
+            trigger('card-added')(card_add);
         }
 
         return {
@@ -116,8 +114,14 @@ function Clin() {
         var cards = [];
         var current_card_index = 0;
 
-        function answer_card(data) {
-            connection.answer_card(data);
+        function pop_card(pk) {
+            card = _(cards).findWhere({'pk': Number(pk)});
+            cards = _(cards).without(card);
+        }
+
+        function answer_card(card) {
+            connection.answer_card(card);
+            pop_card(card.pk);
         }
 
         function add_card(data) {
@@ -129,7 +133,8 @@ function Clin() {
         }
 
         function incoming_cards(data) {
-            cards = cards.concat(data['cards']);
+            cards_with_duplicates = cards.concat(data['cards']);
+            cards = _(cards_with_duplicates).unique(function(card){ return card.pk });
         }
 
         function next_card() {
@@ -141,7 +146,7 @@ function Clin() {
         }
 
         // set up listeners
-        observer.on('incoming_cards', incoming_cards);
+        observer.on('incoming-cards', incoming_cards);
 
         // and here we go!
         function start() {
@@ -153,7 +158,7 @@ function Clin() {
             'answer_card': answer_card,
             'add_card': add_card,
             'next_card': next_card,
-            'connection': connection,
+            'connection': connection
         }
     }
     controller = new Controller();
@@ -285,8 +290,8 @@ function Clin() {
             $(el).find('form').on('submit', answer_card);
         }
 
-        observer.on('incoming_cards', first_card);
-        observer.on('card_answered', next_card);
+        observer.on('incoming-cards', first_card);
+        observer.on('card-answered', next_card);
 
         return {
             'next_card': next_card
@@ -324,7 +329,7 @@ function Clin() {
             $(el).find('form').on('submit', add_card);
         }
 
-        observer.on('card_added', reset_form);
+        observer.on('card-added', reset_form);
 
         reset_form();
         return {

@@ -58,7 +58,7 @@ class Card(models.Model):
 
     # Boilerplate
     def __unicode__(self):
-        return "%s:%s" % (
+        return "%s = %s" % (
             smart_text(self._truncate(self.question)),
             smart_text(self._truncate(self.answer)),
         )

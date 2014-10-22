@@ -6,6 +6,6 @@ from clin.core import urls as core_urls
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^card/', include(card_urls)),
+    url(r'^cards/', include(card_urls)),
     url(r'', include(core_urls)),
 )

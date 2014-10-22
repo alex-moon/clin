@@ -1,6 +1,7 @@
 import random
 
 from django.db.models import Max
+from django.utils.encoding import smart_text
 
 from clin.card.models import Card
 
@@ -26,6 +27,19 @@ class CardService(object):
         return card
 
     def add_card(self, french, english):
+        french_card = Card.objects.filter(question=french)
+        english_card = Card.objects.filter(question=english)
+        if french_card.exists():
+            raise Exception(
+                'A card with that French value already exists: %s'
+                % french_card.get()
+            )
+        if english_card.exists():
+            raise Exception(
+                'A card with that English value already exists: %s'
+                % english_card.get()
+            )
+
         english_card = Card.objects.create(
             question=english,
             answer=french,
