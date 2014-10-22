@@ -37,9 +37,9 @@ class JsonView(View):
 
 class JsonGetView(JsonView):
     def get(self, request, *args, **kwargs):
-        return self.handle(request, *args, **kwargs)
+        return self.handle(request.GET, *args, **kwargs)
 
 
 class JsonPostView(JsonView):
     def post(self, request, *args, **kwargs):
-        return self.handle(request, *args, **kwargs)
+        return self.handle(json.loads(request.body), *args, **kwargs)

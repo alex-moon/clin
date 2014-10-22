@@ -5,9 +5,9 @@ service = CardService()
 
 
 class AddCardsView(JsonPostView):
-    def get_response(self, request, *args, **kwargs):
+    def get_response(self, data, *args, **kwargs):
         cards = []
-        for card in request.POST['cards']:
+        for card in data['cards']:
             french = card.get('french')
             english = card.get('english')
             if not french or not english:
@@ -20,17 +20,17 @@ class AddCardsView(JsonPostView):
 
 
 class GetCardsView(JsonGetView):
-    def get_response(self, request, *args, **kwargs):
-        count = request.GET.get('count', service.default_card_count())
+    def get_response(self, data, *args, **kwargs):
+        count = data.get('count', service.default_card_count())
         cards = service.get_cards(count)
         cards_list = [card.serialise() for card in cards]
         return {'cards': cards_list}
 
 
 class AnswerCardsView(JsonPostView):
-    def get_response(self, request, *args, **kwargs):
+    def get_response(self, data, *args, **kwargs):
         cards = []
-        for card in request.POST['cards']:
+        for card in data['cards']:
             pk = card['pk']
             answer = card['answer']
             cards.append(service.answer_card(pk, answer))
