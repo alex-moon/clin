@@ -3,10 +3,10 @@ function Clin() {
 
     function Backend() {
         var get_cards_url = '/card/get/';
-        var add_card_url = '/card/add/';
-        var answer_card_url = _.template('/card/answer/<%= pk %>/')
+        var add_cards_url = '/card/add/';
+        var answer_cards_url = '/card/answer/';
 
-        function get_cards(count, success, failure) {
+        function get_cards(success, failure, count) {
             var url = get_cards_url;
             if (!_.isUndefined(count)) {
                 url += '?count=' + count;
@@ -14,18 +14,20 @@ function Clin() {
             $.get(url).success(success).fail(failure);
         }
 
-        function add_cards(data, success, failure) {
-            $.post(add_cards_url, data).success(success).fail(failure);
+        function add_cards(cards, success, failure) {
+            data = {'cards': cards};
+            $.post(add_cards_url, JSON.stringify(data)).success(success).fail(failure);
         }
 
-        function answer_cards(data, success, failure) {
-            $.post(answer_cards_url, data).success(success).fail(failure);
+        function answer_cards(cards, success, failure) {
+            data = {'cards': cards};
+            $.post(answer_cards_url, JSON.stringify(data)).success(success).fail(failure);
         }
 
         return {
             'get_cards': get_cards,
-            'add_card': add_card,
-            'answer_card': answer_card
+            'add_cards': add_cards,
+            'answer_cards': answer_cards
         }
     }
     var backend = new Backend();
@@ -49,20 +51,30 @@ function Clin() {
         }
 
         function attempt_persist() {
-            var adds = _(push_queue).filter(function(x){ return x.action == 'add'; });
-            var answers = _(push_queue).filter(function(x){ return x.action == 'answer'; });
+            var adds = _(persist_queue).filter(function(x){ return x.action == 'add'; });
+            var answers = _(persist_queue).filter(function(x){ return x.action == 'answer'; });
 
-            var adds_cards = _(adds).map(function(x){ return x.cards; }
-            var answers_cards = _(answers).map(function(x){ return x.cards; }
+            var adds_cards = _(adds).reduce(function(ac, x){ return ac.concat(x.cards); }, []);
+            var answers_cards = _(answers).reduce(function(ac, x){ return ac.concat(x.cards); }, []);
 
-            backend.add_cards(adds_cards,
-                function(){ push_queue = _(push_queue).difference(adds); },
-                function(){ _.delay(attemp_persist, 30000); }
-            );
-            backend.answer_cards(answers_cards,
-                function(){ push_queue = _(push_queue).difference(answers); },
-                function(){ _.delay(attemp_persist, 30000); }
-            );
+            console.log(adds_cards);
+
+            if (adds_cards.length) {
+                backend.add_cards(adds_cards,
+                    function(data){
+                        persist_queue = _(persist_queue).difference(adds);
+                        trigger('incoming_cards')(data);
+                    },
+                    function(){ _.delay(attemp_persist, 30000); }
+                );
+            }
+
+            if (answers_cards.length) {
+                backend.answer_cards(answers_cards,
+                    function(){ persist_queue = _(persist_queue).difference(answers); },
+                    function(){ _.delay(attemp_persist, 30000); }
+                );
+            }
         }
 
         function attempt_get() {
@@ -72,14 +84,14 @@ function Clin() {
             );
         }
 
-        function queue(data) {
-            persist_queue.push(data);
+        function sync() {
             attempt_persist();
+            attempt_get();
         }
 
-        function sync() {
-            // attemp_persist();
-            attempt_get();
+        function queue(data) {
+            persist_queue.push(data);
+            sync();
         }
 
         function answer_card(card_answer) {
@@ -89,7 +101,13 @@ function Clin() {
 
         function add_card(card_add) {
             queue({'action': 'add', 'cards': [card_add]});
-            trigger('card-added')(card_add);
+            trigger('card_added')(card_add);
+        }
+
+        return {
+            'sync': sync,
+            'answer_card': answer_card,
+            'add_card': add_card
         }
     }
     var connection = new ConnectionManager();
@@ -127,7 +145,7 @@ function Clin() {
 
         // and here we go!
         function start() {
-            backend.sync();
+            connection.sync();
         }
 
         return {
@@ -135,7 +153,7 @@ function Clin() {
             'answer_card': answer_card,
             'add_card': add_card,
             'next_card': next_card,
-            'backend': backend,
+            'connection': connection,
         }
     }
     controller = new Controller();
@@ -306,7 +324,7 @@ function Clin() {
             $(el).find('form').on('submit', add_card);
         }
 
-        observer.on('incoming_cards', reset_form);
+        observer.on('card_added', reset_form);
 
         reset_form();
         return {

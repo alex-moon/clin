@@ -14,6 +14,7 @@ class CardService(object):
         return self.DEFAULT_CARD_COUNT
 
     def get_cards(self, count=DEFAULT_CARD_COUNT):
+        count = int(count)
         sample = Card.objects.all()[:count * 10]
         return random.sample(sample, count if count < sample.count() else sample.count())
 
