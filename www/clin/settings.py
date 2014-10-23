@@ -63,10 +63,10 @@ WSGI_APPLICATION = 'clin.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'clin',
-        'Host': '127.0.0.1',
-        'USER': 'clin',
-        'PASSWORD': 'clin',
+        'NAME': os.environ.get('RDS_DB_NAME', 'clin'),
+        'Host': os.environ.get('RDS_HOSTNAME', '127.0.0.1'),
+        'USER': os.environ.get('RDS_USERNAME', 'clin'),
+        'PASSWORD': os.environ.get('RDS_PASSWORD', 'clin'),
     }
 }
 
