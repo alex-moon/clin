@@ -267,15 +267,22 @@ function Clin() {
         }
         
         function next_card(data) {
-            var next_card = controller.next_card();
-            var $next_card_el = $(template({'card': next_card}));
-            var $old_card = $(el).find('.row');
+            // first show the answer
+            var $question = $(el).find('.test-view-question');
+            helpers.cycle_up($question, function(){
+                _.delay(function(){
+                    // then cycle to next card
+                    var next_card = controller.next_card();
+                    var $next_card_el = $(template({'card': next_card}));
+                    var $old_card = $(el).find('.row');
 
-            $(el).append($next_card_el);
-            helpers.cycle_up(el, function(){
-                $old_card.remove();
+                    $(el).append($next_card_el);
+                    helpers.cycle_up(el, function(){
+                        $old_card.remove();
+                    });
+                    bind_listeners();
+                }, 1000);
             });
-            bind_listeners();
         }
 
         function answer_card(e) {
@@ -286,12 +293,19 @@ function Clin() {
             controller.answer_card(data);
         }
 
+        function skip_card(e) {
+            e.preventDefault();
+            next_card();
+        }
+
         function bind_listeners(data) {
             $(el).find('form').on('submit', answer_card);
+            $(el).find('button.test-view-skip').on('click', skip_card);
         }
 
         observer.on('incoming-cards', first_card);
         observer.on('card-answered', next_card);
+        observer.on('card-skipped', next_card);
 
         return {
             'next_card': next_card

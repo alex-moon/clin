@@ -22,7 +22,7 @@ input[type=text] {
     margin-left: 30px;
 }
 
-button[type=submit] {
+button {
     margin-top: 10px;
 }
 
@@ -70,6 +70,13 @@ label {
 
 .test-view-question {
     text-align: center;
+}
+
+.test-flash-answer {
+    display: none;
+    padding: 9px;
+    font-size: xx-large;
+    font-weight: bold;
 }
 
 #add-view {

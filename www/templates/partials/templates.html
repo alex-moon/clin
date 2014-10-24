@@ -2,11 +2,13 @@
     <div class="row" data-card="<%= card.pk %>">
         <form>
             <input type="hidden" name="pk" value="<%= card.pk %>" />
-            <div class="col-md-10 test-view-question">
-                <label><%= card.question %> <input name="answer" type="text" value="" /></label>
+            <div class="col-md-8 test-view-question">
+                <div><label><%= card.question %> <input name="answer" type="text" value="" /></label></div>
+                <div class="test-flash-answer"><%= card.answer %></label></div>
             </div>
-            <div class="col-md-2 test-view-submit">
+            <div class="col-md-4 test-view-submit">
                 <button type="submit" class="btn btn-primary" data-loading-text="Submitting...">Submit</button>
+                <button class="btn btn-default test-view-skip">Skip</button>
             </div>
         </form>
     </div>
