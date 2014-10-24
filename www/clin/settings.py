@@ -20,11 +20,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'gfaqpd=2n+@3r%at+g+006_4)f*f%*=kz7u8n-o*&4r)evbbd-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-TEMPLATE_DEBUG = True
-
-ALLOWED_HOSTS = []
+TEMPLATE_DEBUG = DEBUG = os.environ.get('buildenv', 'local') != 'prod'
+ALLOWED_HOSTS = ['clin', 'clin.elasticbeanstalk.com']
 
 
 # Application definition
@@ -64,7 +61,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('RDS_DB_NAME', 'clin'),
-        'Host': os.environ.get('RDS_HOSTNAME', '127.0.0.1'),
+        'HOST': os.environ.get('RDS_HOSTNAME', '127.0.0.1'),
         'USER': os.environ.get('RDS_USERNAME', 'clin'),
         'PASSWORD': os.environ.get('RDS_PASSWORD', 'clin'),
     }
