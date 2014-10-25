@@ -1,4 +1,5 @@
 #!/bin/bash
+export buildenv=prod
 source /var/www/rds.conf && uwsgi \
     --socket 0.0.0.0:8765 \
     --chdir /var/www/clin \

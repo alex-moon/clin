@@ -51,6 +51,7 @@ function Clin() {
         }
 
         function attempt_persist() {
+            debug('connection.attempt_persist');
             var adds = _(persist_queue).filter(function(x){ return x.action == 'add'; });
             var answers = _(persist_queue).filter(function(x){ return x.action == 'answer'; });
 
@@ -76,6 +77,7 @@ function Clin() {
         }
 
         function attempt_get() {
+            debug('connection.attempt_get');
             backend.get_cards(
                 trigger('incoming-cards'),
                 function(){ _.delay(attempt_get, 30000); }
@@ -83,6 +85,7 @@ function Clin() {
         }
 
         function sync() {
+            debug('connection.sync');
             attempt_persist();
             attempt_get();
         }
@@ -150,6 +153,7 @@ function Clin() {
 
         // and here we go!
         function start() {
+            debug('controller.start');
             connection.sync();
         }
 
@@ -186,6 +190,8 @@ function Clin() {
                 $new_el.css('display', 'block').addClass('fade-in-' + direction);
                 _.delay(function(){
                     $new_el.removeClass('fade-in-' + direction);
+                    // handy little focus-setter 'cos I said so:
+                    $new_el.find('input[type=text]').first().focus();
                 }, 300);
 
                 if (!_.isUndefined(callback)) {
@@ -259,10 +265,14 @@ function Clin() {
         function first_card(data) {
             var $current_card = $(el).find('.row');
             if (!$current_card.length && data['cards'] && data['cards'][0]) {
+                observer.off('incoming-cards', first_card);
                 var next_card = data['cards'][0];
                 var next_card_el = template({'card': next_card});
-                $(el).html(next_card_el);
-                bind_listeners();
+                $(el).append(next_card_el);
+                helpers.cycle_up(el, function(){
+                    $(el).find('.test-placeholder').remove();
+                    bind_listeners();
+                });
             }
         }
         
@@ -279,8 +289,8 @@ function Clin() {
                     $(el).append($next_card_el);
                     helpers.cycle_up(el, function(){
                         $old_card.remove();
+                        bind_listeners();
                     });
-                    bind_listeners();
                 }, 1000);
             });
         }
@@ -325,10 +335,9 @@ function Clin() {
             if ($old_form.length) {
                 helpers.cycle_up(el, function(){
                     $old_form.remove();
+                    bind_listeners();
                 });
             }
-
-            bind_listeners();
         }
 
         function add_card(e) {

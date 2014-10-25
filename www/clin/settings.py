@@ -5,7 +5,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 SECRET_KEY = os.environ.get('django_secret_key', 'gfaqpd=2n+@3r%at+g+006_4)f*f%*=kz7u8n-o*&4r)evbbd-')
 TEMPLATE_DEBUG = DEBUG = os.environ.get('buildenv', 'local') != 'prod'
-ALLOWED_HOSTS = ['clin', 'clin.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['clin']
 
 
 INSTALLED_APPS = (
@@ -21,6 +21,16 @@ INSTALLED_APPS = (
     'clin.card',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "clin.core.context.debug",
+)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

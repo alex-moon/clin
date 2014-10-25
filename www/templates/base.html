@@ -12,6 +12,7 @@
 
 <body>
 <div class="container content-wrapper">
+{% if debug %}{% include 'partials/debug.html' %}{% endif %}
 {% block content %}{% endblock %}
 </div>
 
@@ -20,6 +21,7 @@ An Alex Moon Production &bull; <a href="https://github.com/alex-moon/clin/">Gith
 </footer>
 
 <script src="{% static 'js/jquery.min.js' %}"></script>
+<script>debug=function(s){% if debug %}$('#d').append('<li>'+s+'</li>').scrollTop($('#d').prop("scrollHeight")){% else %}{}{% endif %}</script>
 {% block scripts %}{% endblock %}
 
 </body>

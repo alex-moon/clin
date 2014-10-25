@@ -2,7 +2,7 @@ from datetime import datetime
 from fabric.api import env
 
 
-env.hosts = ['54.77.62.48']
+env.hosts = ['clin']
 env.user = 'ubuntu'
 
 env.provision_flag = '/var/www/provisioned'
