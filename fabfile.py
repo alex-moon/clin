@@ -89,6 +89,10 @@ def backup_db():
 
 
 def uwsgi():
+    # these shouldn't be necessary but for some reason uwsgi isn't receiving INT from supervisor :(
+    sudo('service supervisor stop')
+    sudo('uwsgi --stop /var/run/uwsgi.pid || true')
+
     print green("Updating uwsgi")
     put('deploy/uwsgi.sh', '/var/www/uwsgi.sh')
     sudo('chmod +x /var/www/uwsgi.sh')
