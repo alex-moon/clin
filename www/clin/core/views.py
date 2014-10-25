@@ -6,7 +6,14 @@ from django.http import HttpResponse
 
 # Template views
 class HomeView(TemplateView):
-    template_name = 'home.html'
+    def get_template_names(self):
+        if (
+            self.request.GET.get('activate', None) != 'clin'
+            and not self.request.session.get('activated')
+        ):
+            return ['forbidden.html']
+        self.request.session['activated'] = True
+        return ['home.html']
 
 
 # JSON API
