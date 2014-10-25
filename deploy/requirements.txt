@@ -4,3 +4,4 @@ django-extensions
 Werkzeug
 ipdb
 python-Levenshtein
+uwsgi

@@ -90,12 +90,13 @@ def backup_db():
 
 
 def uwsgi():
-    put('deploy/uwsgi.ini', '/var/www/uwsgi.ini')
+    put('deploy/uwsgi.sh', '/var/www/uwsgi.sh')
+    sudo('chmod +x /var/www/uwsgi.sh')
 
 
 def supervisor():
     put('deploy/supervisor.conf', '/etc/supervisor/conf.d/clin.conf')
-    sudp('service supervisor restart')
+    sudo('service supervisor restart')
 
 
 def nginx():
