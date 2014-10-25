@@ -1,6 +1,8 @@
 www/public/
 *~
 notes.txt
+*.pem
+rds.conf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -56,5 +58,3 @@ docs/_build/
 
 # PyBuilder
 target/
-.elasticbeanstalk/
-aws/
