@@ -85,7 +85,7 @@ def backup_db():
         sudo("mkdir -p %(backup_dir)s" % env)
 
     env.db_backup = "%(backup_dir)s/clin-%(now)s.sql.gz" % env
-    sudo('source %(rds_conf)s && mysqldump -u${db_user} -p${db_pass} ${db_name} > %(db_backup)s' % env)
+    sudo('source %(rds_conf)s && mysqldump -h${db_host} -u${db_user} -p${db_pass} ${db_name} > %(db_backup)s' % env)
     print green('Existing database backed up to: %(db_backup)s' % env)
 
 
