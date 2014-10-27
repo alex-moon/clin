@@ -337,15 +337,20 @@ function Clin() {
                     $old_form.remove();
                     bind_listeners();
                 });
+            } else {
+                bind_listeners();
             }
         }
 
         function add_card(e) {
+            debug('add_view.add_card');
             e.preventDefault();
             var form = $(el).find('form');
             form.find('button[type=submit]').button('loading');
             data = helpers.form_to_obj(form);
+            debug('we have data: ' + JSON.stringify(data));
             controller.add_card(data);
+            debug('add_card end');
         }
 
         function bind_listeners(data) {
