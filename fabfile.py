@@ -14,8 +14,8 @@ def manage(*args):
 
 def deploy(tag=None):
     if not exists(env.provision_flag):
-        put('deploy/rds.conf', env.rds_conf)
-        put('deploy/provision.sh', env.provision_script)
+        put('build/rds.conf', env.rds_conf)
+        put('build/provision.sh', env.provision_script)
         sudo('sudo chmod +x %(provision_script)s && %(provision_script)s' % env)
 
     backup_target_database()
@@ -67,7 +67,7 @@ def unpack():
         sudo('tar xvzf %(unpack_path)s' % env)
 
     print green("Doing pip install")
-    sudo('pip install -r %(tmp_code_dir)s/deploy/requirements.txt' % env)
+    sudo('pip install -r %(tmp_code_dir)s/build/requirements.txt' % env)
 
     print green("Moving www dir into place")
     if exists(env.code_dir):
@@ -94,17 +94,17 @@ def uwsgi():
     sudo('uwsgi --stop /var/run/uwsgi.pid || true')
 
     print green("Updating uwsgi")
-    put('deploy/uwsgi.sh', '/var/www/uwsgi.sh')
+    put('build/uwsgi.sh', '/var/www/uwsgi.sh')
     sudo('chmod +x /var/www/uwsgi.sh')
 
 
 def supervisor():
     print green("Updating supervisor")
-    put('deploy/supervisor.conf', '/etc/supervisor/conf.d/clin.conf')
+    put('build/supervisor.conf', '/etc/supervisor/conf.d/clin.conf')
     sudo('service supervisor restart')
 
 
 def nginx():
     print green("Updating nginx")
-    put('deploy/nginx.conf', '/etc/nginx/sites-enabled/clin.conf')
+    put('build/nginx.conf', '/etc/nginx/sites-enabled/clin.conf')
     sudo('/etc/init.d/nginx restart')
