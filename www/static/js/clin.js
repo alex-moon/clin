@@ -34,9 +34,6 @@ function Clin() {
 
     function ConnectionManager() {
         // queue pushes until the server is available
-        // @todo also poll for new cards when card count drops below 50?
-        // @todo add listener triggers from backend
-
         var persist_queue = [];
 
         function trigger(keyword) {
@@ -50,7 +47,12 @@ function Clin() {
             return handle;
         }
 
-        function attempt_persist() {
+        function wait(callback, timeout) {
+            // retries callback doubling timeout on each attempt
+            _.delay(callback, timeout, timeout * 2);
+        }
+
+        function attempt_persist(timeout) {
             debug('connection.attempt_persist');
             var adds = _(persist_queue).filter(function(x){ return x.action == 'add'; });
             var answers = _(persist_queue).filter(function(x){ return x.action == 'answer'; });
@@ -64,30 +66,39 @@ function Clin() {
                         persist_queue = _(persist_queue).difference(adds);
                         trigger('incoming-cards')(data);
                     },
-                    function(){ _.delay(attempt_persist, 30000); }
+                    function(){
+                        wait(attempt_persist, timeout);
+                    }
                 );
             }
 
             if (answers_cards.length) {
                 backend.answer_cards(answers_cards,
-                    function(){ persist_queue = _(persist_queue).difference(answers); },
-                    function(){ _.delay(attempt_persist, 30000); }
+                    function(){
+                        persist_queue = _(persist_queue).difference(answers);
+                    },
+                    function(){
+                        wait(attempt_persist, timeout);
+                    }
                 );
             }
         }
 
-        function attempt_get() {
+        function attempt_get(timeout) {
             debug('connection.attempt_get');
             backend.get_cards(
                 trigger('incoming-cards'),
-                function(){ _.delay(attempt_get, 30000); }
+                function(){ 
+                    wait(attempt_get, timeout);
+                }
             );
         }
 
         function sync() {
             debug('connection.sync');
-            attempt_persist();
-            attempt_get();
+            // 1 second, then 2 seconds, then 4 seconds, etc.
+            attempt_persist(1000);
+            attempt_get(1000);
         }
 
         function queue(data) {
