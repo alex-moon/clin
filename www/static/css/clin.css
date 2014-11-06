@@ -104,10 +104,10 @@ footer {
 }
 
 .fade-out-up {
-  animation: fadeOutUpFrames linear 0.3s;
-  -webkit-animation: fadeOutUpFrames linear 0.3s;
-  -moz-animation: fadeOutUpFrames linear 0.3s;
-  -o-animation: fadeOutUpFrames linear 0.3s;
+  animation: fadeOutUpFrames cubic-bezier(1, 0, 1, 1) 0.3s;
+  -webkit-animation: fadeOutUpFrames cubic-bezier(1, 0, 1, 1) 0.3s;
+  -moz-animation: fadeOutUpFrames cubic-bezier(1, 0, 1, 1) 0.3s;
+  -o-animation: fadeOutUpFrames cubic-bezier(1, 0, 1, 1) 0.3s;
   opacity: 0;
 }
 @keyframes fadeOutUpFrames{
@@ -128,10 +128,10 @@ footer {
 }
 
 .fade-in-up {
-  animation: fadeInUpFrames linear 0.3s;
-  -webkit-animation: fadeInUpFrames linear 0.3s;
-  -moz-animation: fadeInUpFrames linear 0.3s;
-  -o-animation: fadeInUpFrames linear 0.3s;
+  animation: fadeInUpFrames cubic-bezier(0, 1, 1, 1) 0.3s;
+  -webkit-animation: fadeInUpFrames cubic-bezier(0, 1, 1, 1) 0.3s;
+  -moz-animation: fadeInUpFrames cubic-bezier(0, 1, 1, 1) 0.3s;
+  -o-animation: fadeInUpFrames cubic-bezier(0, 1, 1, 1) 0.3s;
   position: relative;
 }
 @keyframes fadeInUpFrames{
@@ -152,10 +152,10 @@ footer {
 }
 
 .fade-out-down {
-  animation: fadeOutDownFrames linear 0.3s;
-  -webkit-animation: fadeOutDownFrames linear 0.3s;
-  -moz-animation: fadeOutDownFrames linear 0.3s;
-  -o-animation: fadeOutDownFrames linear 0.3s;
+  animation: fadeOutDownFrames cubic-bezier(1, 0, 1, 1) 0.3s;
+  -webkit-animation: fadeOutDownFrames cubic-bezier(1, 0, 1, 1) 0.3s;
+  -moz-animation: fadeOutDownFrames cubic-bezier(1, 0, 1, 1) 0.3s;
+  -o-animation: fadeOutDownFrames cubic-bezier(1, 0, 1, 1) 0.3s;
   opacity: 0;
 }
 @keyframes fadeOutDownFrames{
@@ -176,10 +176,10 @@ footer {
 }
 
 .fade-in-down {
-  animation: fadeInDownFrames linear 0.3s;
-  -webkit-animation: fadeInDownFrames linear 0.3s;
-  -moz-animation: fadeInDownFrames linear 0.3s;
-  -o-animation: fadeInDownFrames linear 0.3s;
+  animation: fadeInDownFrames cubic-bezier(0, 1, 1, 1) 0.3s;
+  -webkit-animation: fadeInDownFrames cubic-bezier(0, 1, 1, 1) 0.3s;
+  -moz-animation: fadeInDownFrames cubic-bezier(0, 1, 1, 1) 0.3s;
+  -o-animation: fadeInDownFrames cubic-bezier(0, 1, 1, 1) 0.3s;
 }
 @keyframes fadeInDownFrames{
   0% { opacity:0; transform: translate(0px,-100px); }
