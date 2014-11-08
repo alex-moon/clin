@@ -71,4 +71,4 @@ class Card(models.Model):
         return string[:TRUNCATE_LENGTH] + '...'
 
     class Meta(object):
-        ordering = ('answered_count', 'last_score')
+        ordering = ('answered_count', 'average_score')

@@ -1,7 +1,6 @@
 import random
 
 from django.db.models import Max
-from django.utils.encoding import smart_text
 
 from clin.card.models import Card
 
@@ -16,7 +15,7 @@ class CardService(object):
 
     def get_cards(self, count=DEFAULT_CARD_COUNT):
         count = int(count)
-        sample = Card.objects.all()[:count * 10]
+        sample = Card.objects.all()[:count * 2]
         return random.sample(sample, count if count < sample.count() else sample.count())
 
     def answer_card(self, pk, answer):
