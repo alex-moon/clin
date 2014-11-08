@@ -13,4 +13,8 @@ chown root:www-data /etc/nginx/sites-enabled/   && chmod 774 /etc/nginx/sites-en
 
 usermod -G www-data ubuntu
 
+cat >> /home/ubuntu/.bashrc << EOF
+cd /var/www/clin/ && source ../rds.conf
+EOF
+
 echo date > /var/www/provisioned

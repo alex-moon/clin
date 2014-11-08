@@ -1,2 +1,2 @@
 #!/bin/bash
-fab deploy -i clin.pem
+fab deploy -i $(dirname $0)/clin.pem
