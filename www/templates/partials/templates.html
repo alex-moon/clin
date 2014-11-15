@@ -3,7 +3,7 @@
         <form>
             <input type="hidden" name="pk" value="<%= card.pk %>" />
             <div class="col-md-8 test-view-question">
-                <div><label><%= card.question %> <input name="answer" type="text" value="" /></label></div>
+                <div><label><%= card.question %> <input name="answer" type="text" value="" autocomplete="off" /></label></div>
                 <div class="test-flash-answer"><%= card.answer %></label></div>
             </div>
             <div class="col-md-4 test-view-submit">
