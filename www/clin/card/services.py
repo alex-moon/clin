@@ -6,7 +6,7 @@ from clin.card.models import Card
 
 
 class CardService(object):
-    DEFAULT_CARD_COUNT = 100
+    DEFAULT_CARD_COUNT = 200
 
     _cache_max_answered = None
 
@@ -14,9 +14,12 @@ class CardService(object):
         return self.DEFAULT_CARD_COUNT
 
     def get_cards(self, count=DEFAULT_CARD_COUNT):
-        count = int(count)
-        sample = Card.objects.all()[:count * 2]
-        return random.sample(sample, count if count < sample.count() else sample.count())
+        # count = int(count)
+        # sample = Card.objects.all()[:count * 2]
+        # return random.sample(sample, count if count < sample.count() else sample.count())
+        cards = Card.objects.all()[:count]  # for now we're going to be less random
+        random.shuffle(cards)
+        return cards
 
     def answer_card(self, pk, answer):
         card = Card.objects.get(pk=pk)
